@@ -1,0 +1,17 @@
+# AWS Expert Agent - Python Dependencies
+
+# AgentCore Runtime SDK
+bedrock-agentcore>=0.1.0
+
+# LangChain & LangGraph
+langchain>=0.3.0
+langchain-aws>=0.2.0
+langchain-core>=0.3.0
+langgraph>=0.2.0
+
+# AWS SDK
+boto3>=1.35.0
+
+# Optional: For enhanced functionality
+# requests>=2.32.0
+# python-dotenv>=1.0.0
