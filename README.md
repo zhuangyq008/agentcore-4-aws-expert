@@ -68,14 +68,14 @@ aws-expert-agent/
 
 | 项目 | 值 |
 |------|-----|
-| **Runtime ID** | `aws_expert_agent-8bkRCF6kch` |
-| **Runtime ARN** | `arn:aws:bedrock-agentcore:us-west-2:284367710968:runtime/aws_expert_agent-8bkRCF6kch` |
-| **Endpoint ARN** | `arn:aws:bedrock-agentcore:us-west-2:284367710968:runtime/aws_expert_agent-8bkRCF6kch/runtime-endpoint/DEFAULT` |
-| **Region** | `us-west-2` |
-| **AWS Account** | `284367710968` |
-| **ECR Image** | `284367710968.dkr.ecr.us-west-2.amazonaws.com/aws-expert-agent:latest` |
-| **Version** | 2 |
-| **Status** | READY |
+| **Runtime ID** | `aws_expert_agent-<RUNTIME_ID>` |
+| **Runtime ARN** | `arn:aws:bedrock-agentcore:<REGION>:<ACCOUNT_ID>:runtime/aws_expert_agent-<RUNTIME_ID>` |
+| **Endpoint ARN** | `arn:aws:bedrock-agentcore:<REGION>:<ACCOUNT_ID>:runtime/aws_expert_agent-<RUNTIME_ID>/runtime-endpoint/DEFAULT` |
+| **Region** | `<REGION>` |
+| **AWS Account** | `<ACCOUNT_ID>` |
+| **ECR Image** | `<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/aws-expert-agent:latest` |
+| **Version** | *(see deployment-info.json after deploy)* |
+| **Status** | *(see deployment-info.json after deploy)* |
 
 ---
 
@@ -108,7 +108,7 @@ client = boto3.client("bedrock-agentcore", region_name="us-west-2")
 session_id = f"my-session-{uuid.uuid4()}"
 
 response = client.invoke_agent_runtime(
-    agentRuntimeArn="arn:aws:bedrock-agentcore:us-west-2:284367710968:runtime/aws_expert_agent-8bkRCF6kch",
+    agentRuntimeArn="arn:aws:bedrock-agentcore:us-west-2:<ACCOUNT_ID>:runtime/aws_expert_agent-<RUNTIME_ID>",
     runtimeSessionId=session_id,
     payload=json.dumps({
         "input": "在制造行业中，如何使用 AWS IoT 实现预测性维护？",
@@ -358,7 +358,7 @@ client = boto3.client("bedrock-agentcore", region_name="us-west-2")
 session_id = f"session-{uuid.uuid4()}"
 
 response = client.invoke_agent_runtime(
-    agentRuntimeArn="arn:aws:bedrock-agentcore:us-west-2:284367710968:runtime/aws_expert_agent-8bkRCF6kch",
+    agentRuntimeArn="arn:aws:bedrock-agentcore:us-west-2:<ACCOUNT_ID>:runtime/aws_expert_agent-<RUNTIME_ID>",
     runtimeSessionId=session_id,
     payload=json.dumps({"input": "你的问题", "session_id": session_id}).encode("utf-8"),
     contentType="application/json"
@@ -374,7 +374,7 @@ print(result["response"])
 # 注意：正确命令是 bedrock-agentcore（非 bedrock-agentcore-runtime）
 # 中文 payload 可能导致编码错误，建议用英文或 boto3
 aws bedrock-agentcore invoke-agent-runtime \
-  --agent-runtime-arn "arn:aws:bedrock-agentcore:us-west-2:284367710968:runtime/aws_expert_agent-8bkRCF6kch" \
+  --agent-runtime-arn "arn:aws:bedrock-agentcore:us-west-2:<ACCOUNT_ID>:runtime/aws_expert_agent-<RUNTIME_ID>" \
   --runtime-session-id "my-session-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
   --payload '{"input": "List all available skills", "session_id": "my-session"}' \
   --region us-west-2 \
@@ -388,7 +388,7 @@ cat /tmp/response.bin
 ```bash
 # 查看 Runtime 状态
 aws bedrock-agentcore-control get-agent-runtime \
-  --agent-runtime-id aws_expert_agent-8bkRCF6kch --region us-west-2
+  --agent-runtime-id aws_expert_agent-<RUNTIME_ID> --region us-west-2
 
 # 列出所有 Runtime
 aws bedrock-agentcore-control list-agent-runtimes --region us-west-2
@@ -397,7 +397,7 @@ aws bedrock-agentcore-control list-agent-runtimes --region us-west-2
 python3 -c "
 import boto3, json
 c = boto3.client('bedrock-agentcore-control', region_name='us-west-2')
-r = c.list_agent_runtime_endpoints(agentRuntimeId='aws_expert_agent-8bkRCF6kch')
+r = c.list_agent_runtime_endpoints(agentRuntimeId='aws_expert_agent-<RUNTIME_ID>')
 print(json.dumps(r['runtimeEndpoints'], indent=2, default=str))
 "
 ```
@@ -419,9 +419,9 @@ python3 -c "
 import boto3
 c = boto3.client('bedrock-agentcore-control', region_name='us-west-2')
 c.update_agent_runtime(
-    agentRuntimeId='aws_expert_agent-8bkRCF6kch',
+    agentRuntimeId='aws_expert_agent-<RUNTIME_ID>',
     agentRuntimeArtifact={'containerConfiguration': {'containerUri': '$ECR_URI:v2'}},
-    roleArn='arn:aws:iam::284367710968:role/AgentCoreRuntimeRole-aws-expert-agent',
+    roleArn='arn:aws:iam::<ACCOUNT_ID>:role/AgentCoreRuntimeRole-aws-expert-agent',
     networkConfiguration={'networkMode': 'PUBLIC'},
     filesystemConfigurations=[{'sessionStorage': {'mountPath': '/mnt/workspace'}}]
 )
@@ -454,14 +454,14 @@ aws logs tail /aws/bedrock/invocation-logs --follow --region us-west-2
 ### 8.4 清理资源
 
 ```bash
-ACCOUNT_ID=284367710968
+ACCOUNT_ID=<ACCOUNT_ID>
 REGION=us-west-2
 
 # 删除 Runtime
 python3 -c "
 import boto3
 c = boto3.client('bedrock-agentcore-control', region_name='$REGION')
-c.delete_agent_runtime(agentRuntimeId='aws_expert_agent-8bkRCF6kch')
+c.delete_agent_runtime(agentRuntimeId='aws_expert_agent-<RUNTIME_ID>')
 "
 
 # 删除 ECR 仓库
