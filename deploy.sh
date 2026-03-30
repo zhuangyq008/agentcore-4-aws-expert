@@ -51,6 +51,7 @@ if ! aws iam get-role --role-name ${ROLE_NAME} >/dev/null 2>&1; then
         }' >/dev/null
     aws iam attach-role-policy --role-name ${ROLE_NAME} --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess
     aws iam attach-role-policy --role-name ${ROLE_NAME} --policy-arn arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+    aws iam attach-role-policy --role-name ${ROLE_NAME} --policy-arn arn:aws:iam::aws:policy/CloudWatchFullAccessV2
     echo "  Waiting 10s for IAM propagation..."
     sleep 10
 fi

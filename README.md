@@ -237,6 +237,7 @@ client.update_agent_runtime(
 |------|------|
 | `arn:aws:iam::aws:policy/ReadOnlyAccess` | `run_aws_cli` 工具执行只读命令 |
 | `arn:aws:iam::aws:policy/AmazonBedrockFullAccess` | 容器内调用 Claude 模型 |
+| `arn:aws:iam::aws:policy/CloudWatchFullAccessV2` | 运行时日志写入与监控指标上报 |
 
 ---
 
@@ -472,6 +473,8 @@ aws iam detach-role-policy --role-name AgentCoreRuntimeRole-aws-expert-agent \
   --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess
 aws iam detach-role-policy --role-name AgentCoreRuntimeRole-aws-expert-agent \
   --policy-arn arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+aws iam detach-role-policy --role-name AgentCoreRuntimeRole-aws-expert-agent \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchFullAccessV2
 aws iam delete-role --role-name AgentCoreRuntimeRole-aws-expert-agent
 ```
 
